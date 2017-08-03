@@ -15,6 +15,7 @@ import (
 
 type Imgur struct{}
 
+// Helper function to manually construct the thumbnail URL
 func (im Imgur) getThumbnail(f string) string {
 
 	extension := filepath.Ext(f)
@@ -27,6 +28,7 @@ func (im Imgur) getThumbnail(f string) string {
 	return newFile
 }
 
+// Make requests to the Imgur API
 func (im Imgur) GetMedia(q string) ([]media.Model, error) {
 
 	// Each JSON response object
@@ -42,6 +44,7 @@ func (im Imgur) GetMedia(q string) ([]media.Model, error) {
 		Data []dataMedia `json:"data"`
 	}
 
+	// The optional URL query params to the API
 	type SearchOptions struct {
 		Query   string `url:"q"`
 		All     string `url:"q_all"`
@@ -52,17 +55,16 @@ func (im Imgur) GetMedia(q string) ([]media.Model, error) {
 		SizePx  string `url:"q_size_px"`
 	}
 
-	// Initialize return value
-	var medias []media.Model
+	var mediaModels []media.Model
 
 	imgurKey, ok := utils.GetConfigValue("imgur", "clientID")
 
+	// Return an empty set if the config for imgur is not set
 	if !ok {
-		return medias, fmt.Errorf("Could not get imgur clientID")
+		return mediaModels, fmt.Errorf("Could not get imgur clientID")
 	}
 
 	mediaTypes := []string{"anigif", "png", "gif"}
-
 
 	// Using a waitgroup because we have to query each mediaType separately
 	wg := sync.WaitGroup{}
@@ -71,6 +73,7 @@ func (im Imgur) GetMedia(q string) ([]media.Model, error) {
 	for _, mType := range mediaTypes {
 		wg.Add(1)
 		go func() {
+
 			defer wg.Done()
 			client := &http.Client{}
 			response := dataResult{}
@@ -82,15 +85,22 @@ func (im Imgur) GetMedia(q string) ([]media.Model, error) {
 
 			url := fmt.Sprintf("https://api.imgur.com/3/gallery/search/viral?%s", p.Encode())
 			req, err := http.NewRequest("GET", url, nil)
+
+			// Continue if the HTTP request fails
 			if err != nil {
 				return
 			}
+
 			req.Header.Add("Authorization", "Client-ID "+imgurKey)
 			resp, err := client.Do(req)
+
+			// Continue if the authorization fails
 			if err != nil {
 				return
 			}
+
 			defer resp.Body.Close()
+
 			json.NewDecoder(resp.Body).Decode(&response)
 			medObjs := make([]media.Model, len(response.Data))
 
@@ -109,11 +119,12 @@ func (im Imgur) GetMedia(q string) ([]media.Model, error) {
 			}
 			mut.Lock()
 			defer mut.Unlock()
-			medias = append(medias, medObjs...)
+
+			mediaModels = append(mediaModels, medObjs...)
 		}()
 	}
 	wg.Wait()
 
-	return medias, nil
+	return mediaModels, nil
 
 }
