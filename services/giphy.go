@@ -1,14 +1,14 @@
 package services
 
 import (
+	"embedit/media"
+	"embedit/utils"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
 	"time"
-	"embedit/utils"
-	"embedit/media"
 )
 
 type Giphy struct{}
@@ -54,7 +54,7 @@ func (gi Giphy) GetMedia(q string) ([]media.Model, error) {
 			Slug    string `json:"slug"`
 			Created string `json:"import_datetime"`
 			Source  string `json:"source"`
-			Images map[string]struct {
+			Images  map[string]struct {
 				URL string `json:"url"`
 			} `json:"images"`
 		} `json:"data"`

@@ -10,7 +10,6 @@ import (
 // Store the JSON config as a Go map
 var configuration map[string]map[string]string
 
-
 // Load the credentials.json file if it exists
 // Exit with an error if it does not
 func init() {
@@ -26,7 +25,6 @@ func init() {
 		panic(fmt.Errorf("cannot loading config: %v", err))
 	}
 }
-
 
 // Query the configuration map for a service's key
 // example imgur.clientID GetConfigValue('imgur', 'clientID')

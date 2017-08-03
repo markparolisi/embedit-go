@@ -1,16 +1,16 @@
 package services
 
 import (
+	"embedit/media"
+	"embedit/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/google/go-querystring/query"
 	"net/http"
 	"path/filepath"
 	"strings"
 	"sync"
 	"time"
-	"embedit/utils"
-	"embedit/media"
-	"github.com/google/go-querystring/query"
 )
 
 type Imgur struct{}

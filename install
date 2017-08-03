@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+
+
+project_dir=$(git rev-parse --show-toplevel)
+_install_githooks() {
+
+	precommit_file="$project_dir/.git/hooks/pre-commit"
+
+	if [ ! -e "$precommit_file" ] ; then
+		touch "$precommit_file"
+		/bin/cat <<EOM >$precommit_file
+gofmt -w .
+EOM
+		chmod -R +x "$project_dir/.git/hooks"
+
+	fi
+
+}
+
+_install_githooks
+
+
+_install_creds() {
+
+	creds_file="$project_dir/credentials.json"
+
+	if [ ! -e "$creds_file" ] ; then
+		touch "$creds_file"
+		/bin/cat <<EOM >$creds_file
+{
+  "imgur": {
+    "clientID": "",
+    "clientSecret": ""
+  },
+  "giphy": {
+    "apiKey": ""
+  }
+}
+EOM
+
+	fi
+
+}
+
+_install_creds

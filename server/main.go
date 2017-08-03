@@ -1,16 +1,16 @@
 package server
 
 import (
+	"embedit/media"
+	"embedit/services"
+	"encoding/json"
 	"fmt"
+	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"github.com/gorilla/mux"
-	"encoding/json"
 	"net/url"
 	"strings"
 	"sync"
-	"embedit/media"
-	"embedit/services"
 )
 
 // Instantiate the route and being the http service
