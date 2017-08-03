@@ -13,12 +13,15 @@ import (
 
 type Giphy struct{}
 
+// Make the web request(s) to the Giphy service
+// Return a list of the media.Models
 func (gi Giphy) GetMedia(q string) ([]media.Model, error) {
 
 	var mediaModels []media.Model
 
 	apiKey, ok := utils.GetConfigValue("giphy", "apiKey")
 
+	// If the required API key for Giphy is not present, return an empty result
 	if !ok {
 		return mediaModels, fmt.Errorf("Could not get giphy apiKey")
 	}
@@ -28,9 +31,10 @@ func (gi Giphy) GetMedia(q string) ([]media.Model, error) {
 	params.Add("rating", "r")
 	params.Add("fmt", "json")
 	params.Add("api_key", apiKey)
-	url := fmt.Sprint("https://api.giphy.com/v1/gifs/search?", params.Encode())
-	resp, err := http.Get(url)
+	reqUrl := fmt.Sprint("https://api.giphy.com/v1/gifs/search?", params.Encode())
+	resp, err := http.Get(reqUrl)
 
+	// Return an empty set if the HTTP request fails
 	if err != nil {
 		return mediaModels, err
 	}
@@ -38,10 +42,12 @@ func (gi Giphy) GetMedia(q string) ([]media.Model, error) {
 	respBody, err := ioutil.ReadAll(resp.Body)
 	resp.Body.Close()
 
+	// Return an empty set if there is a problem with the response body
 	if err != nil {
 		return mediaModels, err
 	}
 
+	// Define Giphy response JSON as a struct
 	type giphyResponse struct {
 		Data []struct {
 			URL     string `json:"url"`
@@ -56,12 +62,16 @@ func (gi Giphy) GetMedia(q string) ([]media.Model, error) {
 
 	var gResp giphyResponse
 
+	// Convert the JSOn into the above-defined giphyResponse struct
 	err = json.Unmarshal(respBody, &gResp)
 
+	// Return an empty set if the response cannot be unmarshalled
 	if err != nil {
 		return mediaModels, err
 	}
 
+	// Iterate over all of the image structs from the response
+	// Convert them into media.Models
 	for _, imageData := range gResp.Data {
 		created, err := time.Parse("2006-01-02 15:04:05", imageData.Created)
 
