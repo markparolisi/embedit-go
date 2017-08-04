@@ -1,4 +1,5 @@
 {
+  "name": "Embedit-Go",
   "description": "Go implementation of the Embedit API",
   "repository": "https://github.com/markparolisi/embedit-go",
   "buildpacks": [

@@ -1,7 +1,18 @@
 {
-  "ImportPath": "github.com/markparolisi/embedit-go",
-  "GoVersion": "go1.8",
-  "Packages": [
-    "./..."
-  ]
+	"ImportPath": "embedit",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Packages": [
+		"./..."
+	],
+	"Deps": [
+		{
+			"ImportPath": "github.com/google/go-querystring/query",
+			"Rev": ""
+		},
+		{
+			"ImportPath": "github.com/gorilla/mux",
+			"Rev": ""
+		}
+	]
 }
