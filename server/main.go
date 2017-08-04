@@ -3,6 +3,7 @@ package server
 import (
 	"embedit/media"
 	"embedit/services"
+	"embedit/utils"
 	"encoding/json"
 	"fmt"
 	"github.com/gorilla/mux"
@@ -11,7 +12,6 @@ import (
 	"net/url"
 	"strings"
 	"sync"
-	"embedit/utils"
 )
 
 // Instantiate the route and being the http service
@@ -88,9 +88,8 @@ func mediaIndex(w http.ResponseWriter, r *http.Request) {
 
 		// Skip over any unknown services
 		if serviceRegistry[servicesList[i]] == nil {
-			wg.Done()
+			defer wg.Done()
 		} else {
-
 			go func(i int) {
 				fmt.Println("Query service: " + servicesList[i])
 				result, err := serviceRegistry[servicesList[i]].GetMedia(searchQuery)
@@ -98,7 +97,7 @@ func mediaIndex(w http.ResponseWriter, r *http.Request) {
 					fmt.Println(err)
 					return
 				}
-				wg.Done()
+				defer wg.Done()
 				mediaResponse = append(mediaResponse, result...)
 			}(i)
 		}
