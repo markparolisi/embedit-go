@@ -8,7 +8,7 @@ branches:
     - master
 
 install:
-- go get -u -v $(go list -f '{{join .Imports "\n"}}{{"\n"}}{{join .TestImports "\n"}}' ./... | sort | uniq | grep -v golang-samples)
+- go get
 
 deploy:
   provider: heroku
