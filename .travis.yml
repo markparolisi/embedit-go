@@ -8,7 +8,7 @@ branches:
     - master
 
 install:
-- go get
+  - go get
 
 deploy:
   provider: heroku
