@@ -36,3 +36,9 @@ func GetConfigValue(service string, key string) (string, bool) {
 	v, ok := configuration[service][key]
 	return v, ok
 }
+
+
+type ErrorMessage struct {
+	Code    int
+	Message string
+}

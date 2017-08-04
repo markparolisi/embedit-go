@@ -11,6 +11,7 @@ import (
 	"net/url"
 	"strings"
 	"sync"
+	"embedit/utils"
 )
 
 // Instantiate the route and being the http service
@@ -26,13 +27,8 @@ func index(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Please access the service at /media")
 }
 
-// Interface to collect all of the Services
-type mediaService interface {
-	GetMedia(string) ([]media.Model, error)
-}
-
-// Register all of the Services so we can dymanically invoke them
-var serviceRegistry = map[string]mediaService{
+// Register all of the Services so we can dynamically invoke them
+var serviceRegistry = map[string]services.MediaService{
 	"imgur": services.Imgur{},
 	"giphy": services.Giphy{},
 }
@@ -49,10 +45,11 @@ func mediaIndex(w http.ResponseWriter, r *http.Request) {
 	// Throw an error if request does not contain a search query param
 	if query == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode("No Search Query Provided"); err != nil {
-			panic(err)
+		errResp := utils.ErrorMessage{
+			Code:    400,
+			Message: "No Search Query Provided",
 		}
-
+		json.NewEncoder(w).Encode(errResp)
 		return
 	}
 
@@ -69,9 +66,12 @@ func mediaIndex(w http.ResponseWriter, r *http.Request) {
 		servicesList = strings.Split(strings.ToLower(servicesCSV), ",")
 	} else {
 		w.WriteHeader(http.StatusBadRequest)
-		if err := json.NewEncoder(w).Encode("No Services Provided"); err != nil {
-			panic(err)
+		errResp := utils.ErrorMessage{
+			Code:    400,
+			Message: "No Services Provided",
 		}
+		json.NewEncoder(w).Encode(errResp)
+		return
 
 		return
 	}
