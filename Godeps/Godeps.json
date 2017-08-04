@@ -1,0 +1,7 @@
+{
+  "ImportPath": "github.com/markparolisi/embedit-go",
+  "GoVersion": "go1.8",
+  "Packages": [
+    "./..."
+  ]
+}
